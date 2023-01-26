@@ -3,9 +3,7 @@ import tweepy, nltk #external libs
 import database, sentiment_analyzer #libs we wrote
 import pickle
 
-#TODO: load this from environment so secrets are not stored in code / git
-#e.g. bearer_token = os.environ['bearer_token']
-bearer_token = None # replace with your token
+bearer_token = os.environ['TWITTER_BEARER_TOKEN']
 
 class STREAM_API(tweepy.StreamingClient):
     conn = database.connect()
@@ -18,14 +16,14 @@ class STREAM_API(tweepy.StreamingClient):
         print('new tweet at ',tweet_time)
         sentiment = sentiment_analyzer.find_sentiment(tweet.text)
 
-        self.cur.execute("INSERT INTO tweets VALUES (?,?,?,?, ?,?,?,?,?)", 
+        self.cur.execute("INSERT INTO tweets VALUES (?,?,?,?, ?,?,?,?,?)",
                         (None, tweet.id, tweet_time, tweet.text,
                         sentiment['overall'],
                         sentiment['neg'],
                         sentiment['neu'],
                         sentiment['pos'],
                         sentiment['compound']))
-        
+
         if self.seen%50 == 0:
             #maybe don't thrash the disk?
             print('50 new tweets; saving to DB')

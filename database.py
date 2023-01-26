@@ -18,7 +18,7 @@ def find_recent_market_sentiment():
     rows = cur.execute(f'SELECT * FROM tweets ORDER BY id DESC LIMIT 500').fetchall()
     sentiment_values = [row['tweet_sentiment_overall'] for row in rows]
     result = sum(sentiment_values) / len(sentiment_values)
-    print('market sentiment: ')
+    print(f'market sentiment: {result}')
     return result
 
 if __name__ == "__main__":
